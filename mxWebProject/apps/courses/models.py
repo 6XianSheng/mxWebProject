@@ -1,23 +1,21 @@
-from django.db import models
+#_*_encoding:utf-8_*_
 from __future__ import unicode_literals
 from datetime import datetime
 
-from DjangoUeditor.models import UEditorField
-from __future__ import unicode_literals
-from datetime import datetime
 from django.db import models
 
-from .organization.models import CourseOrg,Teacher
+from organization.models import CourseOrg,Teacher
 
 #课程model，就是这个课是啥
 #2个外键，该课程对应的讲师，对应的机构
 class Course(models.Model):
-    course_org = models.ForeignKey(CourseOrg, verbose_name=u"课程机构", null=True, blank=True)
-    teacher = models.ForeignKey(Teacher, verbose_name=u"讲师", null=True, blank=True)
+    course_org = models.ForeignKey(CourseOrg, verbose_name=u"课程机构", null=True, blank=True,on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, verbose_name=u"讲师", null=True, blank=True,on_delete=models.CASCADE)
     name = models.CharField(max_length=50, verbose_name=u"课程名")
     desc = models.CharField(max_length=300, verbose_name=u"课程描述")
-    detail = UEditorField(verbose_name=u"课程详情",width=600, height=300, imagePath="courses/ueditor/",
-                                         filePath="courses/ueditor/", default='')
+    # detail = UEditorField(verbose_name=u"课程详情",width=600, height=300, imagePath="courses/ueditor/",
+    #                                      filePath="courses/ueditor/", default='')
+    detail = models.CharField(max_length=200,verbose_name=u"课程详情")
     is_banner = models.BooleanField(default=False, verbose_name=u"是否轮播")
     degree = models.CharField(verbose_name=u"难度", choices=(("cj","初级"), ("zj","中级"), ("gj","高级")), max_length=2)
     learn_times = models.IntegerField(default=0, verbose_name=u"学习时长(分钟数)")
@@ -38,7 +36,7 @@ class Course(models.Model):
 
 #一个课程下肯定会有好几个章节
 class Lesson(models.Model):
-    course = models.ForeignKey(Course, verbose_name=u"课程")
+    course = models.ForeignKey(Course, verbose_name=u"课程",on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name=u"章节名")
     learn_times = models.IntegerField(default=0, verbose_name=u"学习时长(分钟数)")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
@@ -52,7 +50,7 @@ class Lesson(models.Model):
 
 #一个章节对应一个视频
 class Video(models.Model):
-    lesson = models.ForeignKey(Lesson, verbose_name=u"章节")
+    lesson = models.ForeignKey(Lesson, verbose_name=u"章节",on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name=u"视频名")
     learn_times = models.IntegerField(default=0, verbose_name=u"学习时长(分钟数)")
     url = models.CharField(max_length=200, default="", verbose_name=u"访问地址")
@@ -67,7 +65,7 @@ class Video(models.Model):
 
 
 class CourseResource(models.Model):
-    course = models.ForeignKey(Course, verbose_name=u"课程")
+    course = models.ForeignKey(Course, verbose_name=u"课程",on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name=u"名称")
     download = models.FileField(upload_to="course/resource/%Y/%m", verbose_name=u"资源文件", max_length=100)
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
