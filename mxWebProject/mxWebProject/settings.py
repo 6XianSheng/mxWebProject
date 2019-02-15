@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'courses',
     'operation',
     'organization',
-
+    'xadmin',
+    'crispy_forms',
 ]
 
 #不用默认的user表，用users下面的UserProfile
