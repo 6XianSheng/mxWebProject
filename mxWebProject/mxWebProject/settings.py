@@ -17,6 +17,8 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
+sys.path.insert(0,os.path.join(BASE_DIR,'extra_apps'))
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -42,8 +44,9 @@ INSTALLED_APPS = [
     'courses',
     'operation',
     'organization',
-    'xadmin',
-    'crispy_forms',
+    'captcha',
+    # 'xadmin',
+    # 'crispy_forms',
 ]
 
 #不用默认的user表，用users下面的UserProfile
@@ -53,18 +56,24 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# userapp里面重写了django.contrib.auth.backends.ModelBackend
+# 会调用我们自己的authenticate类
+AUTHENTICATION_BACKENDS=(
+    'users.views.CustomBackend',
+)
 
 ROOT_URLCONF = 'mxWebProject.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,12 +93,21 @@ WSGI_APPLICATION = 'mxWebProject.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'mxweb',
+    #     'USER':'root',
+    #     'PASSWORD':'zhrmghg+ywtou123.',
+    #     'HOST':'120.78.178.85',
+    #     'PORT': '3306',
+    #     #'OPTIONS': {'isolation_level': None}
+    # }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mxweb',
-        'USER':'root',
-        'PASSWORD':'',
-        'HOST':'localhost',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS': {'isolation_level': None}
     }
@@ -133,3 +151,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
